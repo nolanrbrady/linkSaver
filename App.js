@@ -25,7 +25,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             test: 'This is a test from state - Face',
-            other: 'this is a test from back'
+            other: 'this is a test from back - Back'
         }
     }
     render(){
