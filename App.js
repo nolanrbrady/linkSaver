@@ -19,6 +19,7 @@ import {
     Dimensions,
     Text,
     StatusBar,
+    Linking,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -38,11 +39,15 @@ class App extends React.Component {
     }
 
     renderLinks = () => {
-        return this.state.links.map((link, i) => {
+        const { links } = this.state;
+        if (!links.length) return;
+        return links.map((link, i) => {
             return (
-                <View style={{ height: 70, borderWidth: 1, borderColor: 'lightgrey', width }}>
-                    <TouchableOpacity key={i} onPress={() => {}}>
-                        <Text style={{ color: 'lightblue'}}>{link}</Text>
+                <View style={styles.linkContainer}>
+                    <TouchableOpacity key={i} onPress={() => {
+                        Linking.openURL(link).catch((err) => console.error('An error occurred', err));
+                    }}>
+                        <Text style={{ color: '#0A84FF', fontSize: 15 }}>{link}</Text>
                     </TouchableOpacity>
                 </View>
             )
@@ -50,7 +55,11 @@ class App extends React.Component {
     }
 
     onSuccess = (res) => {
-        Alert.alert(JSON.stringify(res.data));
+        if (res.data) {
+            this.setState({ links: [res.data, ...this.state.links]})
+        } else {
+            Alert.alert('No URL Associated with this QR Code');
+        }
     }
 
     render(){
@@ -104,6 +113,15 @@ const styles = StyleSheet.create({
     buttonTouchable: {
         padding: 16,
     },
+    linkContainer: {
+        height: 70,
+        borderWidth: 1,
+        borderColor:  'transparent',
+        borderBottomColor: 'lightgrey',
+        width,
+        justifyContent: 'center',
+        paddingLeft: 10
+    }
 });
 
 export default App;
