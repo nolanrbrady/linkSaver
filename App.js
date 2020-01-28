@@ -56,9 +56,35 @@ class App extends React.Component {
 
     onSuccess = (res) => {
         if (res.data) {
-            this.setState({ links: [res.data, ...this.state.links]})
+            Alert.alert(
+                'Link Found',
+                'Do you want to save this link?',
+                [
+                    { text: 'Yes', onPress: () => {
+                        this.setState({ links: [res.data, ...this.state.links]});
+                        Alert.alert(
+                            'Link Saved',
+                            'Would you like to scan another?',
+                            [
+                                {text: 'Yes', onPress: () => this.scanner.reactivate()},
+                                {text: 'No', onPress: () => {}}
+                            ]
+                        )
+                    }},
+                    {text: 'Scan Another One', onPress: () => this.scanner.reactivate()},
+                    {text: 'OK', onPress: () => console.log('OK Pressed')},
+                ],
+                {cancelable: false},
+            );
         } else {
-            Alert.alert('No URL Associated with this QR Code');
+            Alert.alert(
+                'Sorry',
+                'We weren\'t able to find a URL associated with this QR Code. \n Would you like to try again?',
+                [
+                    {text: 'Yes', onPress: () => this.scanner.reactivate()},
+                    {text: 'No', onPress: () => {}}
+                ]
+            );
         }
     }
 
@@ -68,7 +94,8 @@ class App extends React.Component {
                 <StatusBar barStyle={'dark-content'}/>
                 <QRCodeScanner
                     onRead={this.onSuccess}
-                    topViewStyle={{ flex: 1, backgroundColor: 'darkgrey' }}
+                    ref={(node) => { this.scanner = node }}
+                    topViewStyle={{ flex: 1, backgroundColor: '#f2f2f2' }}
                     bottomViewStyle={{ flex: 4 }}
                     cameraStyle={{ height: height * 0.4 }}
                     topContent={
