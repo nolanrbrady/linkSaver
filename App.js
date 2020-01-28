@@ -58,7 +58,7 @@ class App extends React.Component {
         if (res.data) {
             Alert.alert(
                 'Link Found',
-                'Do you want to save this link?',
+                `Do you want to save this link? \n ${res.data}`,
                 [
                     { text: 'Yes', onPress: () => {
                         this.setState({ links: [res.data, ...this.state.links]});
