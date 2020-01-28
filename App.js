@@ -31,16 +31,18 @@ class App extends React.Component {
             test: 'This is a test from state - Face',
             other: 'this is a test from back - Back',
             links: [
-                'https://www.google.com',
-                'https://github.com/react-native-community/react-native-permissions',
-                'https://reactjs.org/',
             ]
         }
     }
 
     renderLinks = () => {
         const { links } = this.state;
-        if (!links.length) return;
+        if (!links.length) return (
+            <View style={{ alignSelf: 'center', alignItems: 'center', paddingTop: 30 }}>
+                <Text style={[styles.title, { paddingBottom: 25, fontWeight: '500', fontSize: 20 }]}>No Links Saved</Text>
+                <Text style={[styles.title, { fontSize: 20 }]}>{`You can start by scanning a \n QR code with the camera.`}</Text>
+            </View>
+        );
         return links.map((link, i) => {
             return (
                 <View style={styles.linkContainer}>
@@ -55,7 +57,8 @@ class App extends React.Component {
     }
 
     onSuccess = (res) => {
-        if (res.data) {
+        const isUrl = res.data.includes('https') || res.data.includes('http');
+        if (res.data && isUrl) {
             Alert.alert(
                 'Link Found',
                 `Do you want to save this link? \n ${res.data}`,
@@ -79,7 +82,7 @@ class App extends React.Component {
         } else {
             Alert.alert(
                 'Sorry',
-                'We weren\'t able to find a URL associated with this QR Code. \n Would you like to try again?',
+                `We weren\'t able to find a URL associated with this QR Code. \n Would you like to try again? \n We found: \n ${res.data}`,
                 [
                     {text: 'Yes', onPress: () => this.scanner.reactivate()},
                     {text: 'No', onPress: () => {}}
